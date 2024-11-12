@@ -1,18 +1,16 @@
 ~~~ python
+#Importing the Book model from the bookshelf app
+>>> from bookshelf.models import Book
 
->>> from bookshelf.models import book
->>> book.objects.all()
-#output: <QuerySet [<book: '1984' by George Orwell>]>
->>> book.objects.values_list('pk', 'title')
-#output: <QuerySet [(1,'1984')]>
->>> book1 = book.objects.get(pk=1)
->>> book1
-#output: <book: '1984' by George Orwell>
+#Retrieving the specific book instance by title
+>>> new_book = Book.objects.get(title='1984')
 
-#retrieving all book attributes
->>> book1.title
-#output: '1984'
->>> book1.author
-#output: 'George Orwell'
->>> book1.publication_year
-#output: 1949
+#Displaying book attributes
+>>> new_book.title
+    # Expected Output: '1984'
+
+>>> new_book.author
+    # Expected Output: 'George Orwell'
+
+>>> new_book.publication_year
+    # Expected Output: 1949
