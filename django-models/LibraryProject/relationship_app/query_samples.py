@@ -1,27 +1,18 @@
 # relationship_app/query_samples.py
+from .models import Book, Library, Librarian,Author
+author_name = "John Doe"
+author = Author.objects.get(name=author_name) 
+Book.objects.filter(author=author)
 
-from .models import Author, Book, Library, Librarian
+library_name = "My Library"
+library = Library.objects.get(name=library_name)
+books = library.books.all()  
+for book in books:
+    print(book)
 
-def query_books_by_author(author_name):
-    """Query all books by a specific author."""
-    try:
-        author = Author.objects.get(name=author_name)
-        return author.books.all()
-    except Author.DoesNotExist:
-        return None
 
-def list_library_books(library_name):
-    """List all books in a library."""
-    try:
-        library = Library.objects.get(name=library_name)
-        return library.books.all()
-    except Library.DoesNotExist:
-        return None
+librarians = Librarian.objects.get(library="library_name")  
 
-def get_library_librarian(library_name):
-    """Retrieve the librarian for a library."""
-    try:
-        library = Library.objects.get(name=library_name)
-        return library.librarian
-    except Library.DoesNotExist:
-        return None
+
+for librarian in librarians:
+    print(librarian)
