@@ -128,3 +128,28 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = 'bookshelf.CustomUser'
+# Redirect all HTTP requests to HTTPS
+SECURE_SSL_REDIRECT = True
+# Enforce HTTPS for one year (in seconds: 31536000 = 1 year)
+SECURE_HSTS_SECONDS = 31536000
+
+# Ensure subdomains also use HTTPS
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# Allow the site to be included in browsers' preloaded HSTS lists
+SECURE_HSTS_PRELOAD = True
+# Ensure session cookies are only sent over HTTPS connections
+SESSION_COOKIE_SECURE = True
+
+# Ensure CSRF cookies are only sent over HTTPS connections
+CSRF_COOKIE_SECURE = True
+# Prevent clickjacking attacks by denying your site to be embedded in iframes
+X_FRAME_OPTIONS = 'DENY'
+
+# Prevent browsers from MIME-sniffing the response type away from the declared content type
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Enable the browser's XSS filter (helpful in preventing some types of XSS attacks)
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
