@@ -15,7 +15,9 @@ class Book(models.Model):
         return self.title
 
 
-
+"""
+created classes that defines the title, author and publication year models.
+"""
     
 
     
