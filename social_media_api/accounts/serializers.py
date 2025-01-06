@@ -1,49 +1,41 @@
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
-from django.contrib.auth.password_validation import validate_password
-
-User = get_user_model()
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    password = serializers.CharField(
-          write_only=True,
-          style={'input_type': 'password', 'placeholder': 'Password'},
-    )
-    class Meta:
-        model = get_user_model()
-        fields = ['url','username', 'email', 'bio', 'password', 'followers']
-
-    def validate_password(self, value):
-        validate_password(value)
-        return value
-
-    def validate(self, attrs):
-        return super().validate(attrs)
-
-    def create(self, validated_data):
-        user = super(UserSerializer, self).create(validated_data)
-        if 'password' in validated_data:
-            user.set_password(validated_data['password'])
-            user.save()
-        return user
-    
+from .models import CustomUser
+from django.contrib.auth import authenticate, get_user_model
 from rest_framework.authtoken.models import Token
-class TokenSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Token
-        fields = ['key', 'user']
-    
 
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Group
-        fields = ['url', 'name']
+class UserSerializer(serializers.ModelSerializer):
+    followers_count = serializers.SerializerMethodField()
 
-class FollowersSerializer(serializers.ModelSerializer):
-    username = serializers.ReadOnlyField()
-    q = get_user_model().objects.all()
-    following = serializers.HyperlinkedRelatedField(view_name='customuser-detail', many=True, queryset=q)
-    followers = serializers.HyperlinkedRelatedField(view_name='customuser-detail', many=True, queryset=q)
+    class Meta:
+        model = CustomUser
+        fields = '__all__'
+
+    def get_followers_count(self, obj):
+        return obj.followers.count()
+
+    class RegisterSerializer(serializers.ModelSerializer):
+        token = serializers.CharField(read_only=True)
     class Meta:
         model = get_user_model()
-        fields = ['username','following', 'followers']
+        fields = ['username', 'email', 'bio', 'profile_picture', 'token']
+
+        def create(self, validated_data):
+        user = get_user_model().objects.create_user(
+            email = validated_data['email'],
+            password=validated_data['password'],
+            bio=validated_data.get('bio', None),
+            profile_picture=validated_data.get('profile_picture', None)
+        )
+
+        Token.objects.create(user=user)
+        return user
+        
+    class LoginSerializers(serializers.ModelSerializer):
+        username = serializers.CharField()
+        password = serializers.CharField()
+
+    class ProfileSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = CustomUser
+            fields = ['username', 'email', 'bio', 'profile_picture', 'followers']
+            read_only_fields = ['username', 'followers']  # Users cannot change these fields
