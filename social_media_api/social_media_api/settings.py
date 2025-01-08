@@ -23,10 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-!*ggjna-&1-sp9z7dutou-oxu@977w-0vnryuucl%imszmo*&n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
-    'pythonanywhere.com'
+    'pythonanywhere.com',
+    'heroku.com'
 ]
 
 
@@ -42,8 +43,8 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'rest_framework',
     'rest_framework.authtoken',
-    'posts',
-    'notifications',
+    'posts.apps.PostsConfig',
+    'notifications.apps.NotificationsConfig',
 ]
 
 MIDDLEWARE = [
@@ -124,7 +125,37 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIR = [
+    BASE_DIR / 'static'
+]
+
+STATIC_ROOT = [
+    config('staticfiles')
+]
+
+MEDIA_ROOT = [
+    BASE_DIR / 'media'
+]
+MEDIA_URL = '/media/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5
+}
+
+SECURE_SSL_REDIRECT = True
+
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SECURE = True
+
+SECURE_BROWSER_XSS_FILTER = True
+
+X_FRAME_OPTIONS = 'ALLOW-FROM https://example.com/'
